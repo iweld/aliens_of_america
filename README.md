@@ -26,4 +26,4 @@ This dataset contains only three tables named
  - location
 
 ## Entity Relationship Diagram
-![alt text](https://github.com/iweld/osha_fatalities/blob/main/ERD.JPG)
+![alt text](https://github.com/iweld/aliens_of_america/blob/main/ERD.JPG)
