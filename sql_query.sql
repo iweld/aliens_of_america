@@ -141,7 +141,7 @@ number_of_states|
 -- All 50 states are represented and the District of Columbia           
 
 -- What is the count of aliens per state and what is the average age?   Order from highest to lowest population.
--- Include the percentage of hostile vs. friendly aliens per state. 
+-- Include the percentage of hostile vs. friendly aliens per state.  Limit the forst 10 for brevity.
 
 WITH alien_aggression AS (
 	SELECT
@@ -164,14 +164,14 @@ WITH alien_aggression AS (
 
 SELECT
 	state,
-	alien_population_number,
+	alien_population_total,
 	avg_alien_age,
-	round(((n_friendly_aliens::float / alien_population_number::float) * 100)::numeric, 2) AS friendly_alien_percentage,
-	round(((n_hostile_aliens / alien_population_number::float) * 100)::numeric, 2) AS hostile_alien_percentage
+	round(((n_friendly_aliens::float / alien_population_total::float) * 100)::numeric, 2) AS friendly_alien_percentage,
+	round(((n_hostile_aliens::float / alien_population_total::float) * 100)::numeric, 2) AS hostile_alien_percentage
 from
 	(SELECT
 		ad.state,
-		count(ad.*) AS alien_population_number,
+		count(ad.*) AS alien_population_total,
 		round(avg(ad.age)) AS avg_alien_age,
 		aa.n_friendly_aliens,
 		aa.n_hostile_aliens
@@ -184,34 +184,112 @@ from
 		aa.n_friendly_aliens) AS tmp
 GROUP BY 
 	state,
-	alien_population_number,
+	alien_population_total,
 	avg_alien_age,
 	n_hostile_aliens,
 	n_friendly_aliens
-ORDER BY alien_population_number DESC
+ORDER BY alien_population_total DESC
+LIMIT 10;
 
 -- Results:
 
-state               |alien_population_number|avg_alien_age|
---------------------+-----------------------+-------------+
-Texas               |                   5413|          200|
-California          |                   5410|          202|
-Florida             |                   4176|          199|
-New York            |                   2690|          202|
-Ohio                |                   1851|          199|
-Virginia            |                   1749|          197|
-District of Columbia|                   1661|          197|
-Pennsylvania        |                   1590|          200|
-Georgia             |                   1431|          196|
-North Carolina      |                   1248|          201|
-Illinois            |                   1223|          197|
-Colorado            |                   1175|          203|
-Arizona             |                   1122|          202|
-Missouri            |                   1102|          198|
-Minnesota           |                   1067|          202|
-Alabama             |                   1066|          199|
-Indiana             |                   1056|          203|
-Michigan            |                   1016|          196|
-Washington          |                    971|          202|
-Louisiana           |                    951|          199|
-        
+state               |alien_population_total|avg_alien_age|friendly_alien_percentage|hostile_alien_percentage|
+--------------------+----------------------+-------------+-------------------------+------------------------+
+Texas               |                  5413|          200|                    49.53|                   50.47|
+California          |                  5410|          202|                    50.15|                   49.85|
+Florida             |                  4176|          199|                    50.36|                   49.64|
+New York            |                  2690|          202|                    50.56|                   49.44|
+Ohio                |                  1851|          199|                    49.43|                   50.57|
+Virginia            |                  1749|          197|                    51.80|                   48.20|
+District of Columbia|                  1661|          197|                    48.77|                   51.23|
+Pennsylvania        |                  1590|          200|                    51.38|                   48.62|
+Georgia             |                  1431|          196|                    51.99|                   48.01|
+North Carolina      |                  1248|          201|                    50.72|                   49.28|
+
+
+-- The Bureau of Economic Analysis goes with an eight-region map of the US.  What is the alien population and gender percentage per region?
+
+WITH alien_aggression_gender AS (
+	SELECT
+		state,
+		gender,
+		count(
+			CASE
+				WHEN aggressive = TRUE THEN 1
+				ELSE 0
+			END 
+		) AS n_hostile_aliens,
+		count(
+			CASE
+				WHEN aggressive = false THEN 1
+				ELSE 0
+			END 
+		) AS n_friendly_aliens
+	FROM alien_data
+	GROUP BY 
+		state,
+		gender
+)            
+
+SELECT 
+	us_region,
+	gender,
+	sum(alien_population) AS alien_population_total
+from
+	(SELECT
+		CASE
+			WHEN lower(ad.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'New England'
+			WHEN lower(ad.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'Southeast'
+			WHEN lower(ad.state) IN ('wisconsin', 'ohio', 'indiana', 'illinois', 'michigan') then 'Great Lakes'
+			WHEN lower(ad.state) IN ('new mexico', 'arizona', 'texas', 'oklahoma') then 'Southwest'
+			WHEN lower(ad.state) IN ('north dakota', 'south dakota', 'kansas', 'iowa', 'nebraska', 'missouri', 'minnesota') then 'Plains'
+			WHEN lower(ad.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'Rocky Mountain'
+			WHEN lower(ad.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'Mideast'
+			WHEN lower(ad.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
+		END AS us_region,
+		ad.gender,
+		count(ad.gender) AS alien_population
+	FROM alien_data AS ad
+	JOIN alien_aggression_gender AS agg
+	ON ad.state = agg.state
+	GROUP BY 
+		us_region,
+		ad.gender
+	ORDER BY us_region, alien_population DESC) AS tmp
+GROUP BY 
+	us_region,
+	gender
+ORDER BY alien_population_total DESC, us_region
+
+
+
+
+
+SELECT DISTINCT state FROM alien_data ORDER BY state
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
