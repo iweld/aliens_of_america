@@ -207,7 +207,50 @@ Georgia             |                  1431|          196|                    51
 North Carolina      |                  1248|          201|                    50.72|                   49.28|
 
 
--- The Bureau of Economic Analysis goes with an eight-region map of the US.  What is the alien population and gender percentage per region?
+-- The Bureau of Economic Analysis goes with an eight-region map of the US.  What regions have the highest population of aliens and what
+-- is the overall population percentage per region?
+
+SELECT
+	us_region,
+	alien_regional_population,
+	round(((alien_regional_population::float / sum(sum(alien_regional_population)) OVER ()) * 100)::numeric, 2) AS regional_population_percentage
+from
+	(SELECT
+		CASE
+			WHEN lower(ad.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'New England'
+			WHEN lower(ad.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'Southeast'
+			WHEN lower(ad.state) IN ('wisconsin', 'ohio', 'indiana', 'illinois', 'michigan') then 'Great Lakes'
+			WHEN lower(ad.state) IN ('new mexico', 'arizona', 'texas', 'oklahoma') then 'Southwest'
+			WHEN lower(ad.state) IN ('north dakota', 'south dakota', 'kansas', 'iowa', 'nebraska', 'missouri', 'minnesota') then 'Plains'
+			WHEN lower(ad.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'Rocky Mountain'
+			WHEN lower(ad.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'Mideast'
+			WHEN lower(ad.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
+		END AS us_region,
+		count(ad.*) AS alien_regional_population
+	FROM alien_data AS ad
+	GROUP BY 
+		us_region
+	ORDER BY alien_regional_population DESC) AS tmp
+GROUP BY 
+	us_region,
+	alien_regional_population
+ORDER BY regional_population_percentage DESC
+
+-- Results:
+
+us_region     |alien_regional_population|regional_population_percentage|
+--------------+-------------------------+------------------------------+
+Southeast     |                    13856|                         27.71|
+Far West      |                     7885|                         15.77|
+Southwest     |                     7600|                         15.20|
+Mideast       |                     7205|                         14.41|
+Great Lakes   |                     5725|                         11.45|
+Plains        |                     4052|                          8.10|
+Rocky Mountain|                     2006|                          4.01|
+New England   |                     1671|                          3.34|
+
+--What is the alien population and gender percentage per region?
+-- Limit the forst 20 for brevity. jaime.m.shaker@gmail.com
 
 WITH alien_aggression_gender AS (
 	SELECT
@@ -234,7 +277,8 @@ WITH alien_aggression_gender AS (
 SELECT 
 	us_region,
 	gender,
-	sum(alien_population) AS alien_population_total
+	alien_gender_population AS alien_gender_population_total,
+	round(((alien_gender_population::float / sum(sum(alien_gender_population)) OVER (PARTITION BY us_region)) * 100)::numeric, 2) AS alien_gender_percentage
 from
 	(SELECT
 		CASE
@@ -248,24 +292,45 @@ from
 			WHEN lower(ad.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
 		END AS us_region,
 		ad.gender,
-		count(ad.gender) AS alien_population
+		count(ad.gender) AS alien_gender_population
 	FROM alien_data AS ad
 	JOIN alien_aggression_gender AS agg
 	ON ad.state = agg.state
 	GROUP BY 
 		us_region,
 		ad.gender
-	ORDER BY us_region, alien_population DESC) AS tmp
+	ORDER BY us_region, alien_gender_population DESC) AS tmp
 GROUP BY 
 	us_region,
-	gender
-ORDER BY alien_population_total DESC, us_region
+	gender,
+	alien_gender_population
+ORDER BY us_region, alien_gender_population_total DESC
+LIMIT 20;
 
+-- Results:
 
-
-
-
-SELECT DISTINCT state FROM alien_data ORDER BY state
+us_region  |gender     |alien_gender_population_total|alien_gender_percentage|
+-----------+-----------+-----------------------------+-----------------------+
+Far West   |Female     |                        28320|                  44.90|
+Far West   |Male       |                        28208|                  44.72|
+Far West   |Non-binary |                         1168|                   1.85|
+Far West   |Bigender   |                         1160|                   1.84|
+Far West   |Agender    |                         1152|                   1.83|
+Far West   |Genderfluid|                         1080|                   1.71|
+Far West   |Polygender |                         1016|                   1.61|
+Far West   |Genderqueer|                          976|                   1.55|
+Great Lakes|Female     |                        20920|                  45.68|
+Great Lakes|Male       |                        20248|                  44.21|
+Great Lakes|Non-binary |                          848|                   1.85|
+Great Lakes|Polygender |                          832|                   1.82|
+Great Lakes|Agender    |                          824|                   1.80|
+Great Lakes|Bigender   |                          792|                   1.73|
+Great Lakes|Genderqueer|                          760|                   1.66|
+Great Lakes|Genderfluid|                          576|                   1.26|
+Mideast    |Female     |                        26008|                  45.12|
+Mideast    |Male       |                        25832|                  44.82|
+Mideast    |Genderfluid|                         1152|                   2.00|
+Mideast    |Non-binary |                         1008|                   1.75|
 
 
 
