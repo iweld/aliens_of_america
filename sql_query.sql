@@ -141,14 +141,42 @@ number_of_states|
 -- All 50 states are represented and the District of Columbia           
 
 -- What is the count of aliens per state and what is the average age?   Order from highest to lowest population.
+-- Include the percentage of hostile vs. friendly aliens per state.
+-- Only show the first 20 for brevity. 
+
+WITH hostile_aliens AS (
+	SELECT
+		state,
+		count(*) AS n_hostile_aliens
+	FROM alien_data
+	WHERE aggressive = TRUE
+	GROUP BY state
+)              
 
 SELECT
 	state,
-	count(*) AS alien_population_number,
-	round(avg(age)) AS avg_alien_age
-FROM alien_data
-GROUP BY state
-ORDER BY alien_population_number desc;
+	alien_population_number,
+	avg_alien_age,
+	round(n_hostile_aliens / sum(sum(alien_population_number)) OVER () * 100, 2) AS hostile_percentage
+from
+	(SELECT
+		ad.state,
+		count(ad.*) AS alien_population_number,
+		round(avg(ad.age)) AS avg_alien_age,
+		ha.n_hostile_aliens
+	FROM alien_data AS ad
+	JOIN hostile_aliens AS ha
+	ON ad.state = ha.state
+	GROUP BY 
+		ad.state,
+		ha.n_hostile_aliens
+	ORDER BY alien_population_number DESC
+	LIMIT 20) AS tmp
+GROUP BY 
+	state,
+	alien_population_number,
+	avg_alien_age,
+	n_hostile_aliens
 
 -- Results:
 
@@ -174,35 +202,4 @@ Indiana             |                   1056|          203|
 Michigan            |                   1016|          196|
 Washington          |                    971|          202|
 Louisiana           |                    951|          199|
-Tennessee           |                    934|          202|
-Massachusetts       |                    767|          199|
-Oklahoma            |                    756|          197|
-Kentucky            |                    699|          204|
-Connecticut         |                    697|          202|
-Kansas              |                    676|          202|
-Nevada              |                    660|          198|
-Maryland            |                    598|          201|
-Wisconsin           |                    579|          194|
-South Carolina      |                    554|          197|
-Iowa                |                    537|          198|
-West Virginia       |                    484|          199|
-New Jersey          |                    474|          208|
-Utah                |                    435|          198|
-Nebraska            |                    420|          208|
-Oregon              |                    413|          203|
-New Mexico          |                    309|          201|
-Arkansas            |                    282|          200|
-Mississippi         |                    282|          204|
-Hawaii              |                    227|          198|
-Idaho               |                    220|          211|
-Alaska              |                    204|          203|
-Delaware            |                    192|          195|
-Montana             |                    144|          195|
-South Dakota        |                    141|          195|
-North Dakota        |                    109|          189|
-New Hampshire       |                     92|          205|
-Rhode Island        |                     53|          201|
-Wyoming             |                     32|          218|
-Maine               |                     32|          197|
-Vermont             |                     30|          220|
         
