@@ -3,6 +3,8 @@
 ## Introduction
 A portfolio building dataset provided by [Ian K.](https://www.linkedin.com/in/ian-klosowicz/) on LinkedIn
 
+Check out [My Current Analysis](https://github.com/iweld/aliens_of_america/blob/main/ANALYSIS.md "My Current Analysis")
+
 ## Problem Statement
 For this project, you play a role as a newly hired Data Analyst for a pharmaceutical company.
 
