@@ -210,12 +210,12 @@ North Carolina      |                  1248|          201|                    50
 -- The Bureau of Economic Analysis goes with an eight-region map of the US.  What regions have the highest population of aliens and what
 -- is the overall population percentage per region?
 
-SELECT
-	us_region,
-	alien_regional_population,
-	round(((alien_regional_population::float / sum(sum(alien_regional_population)) OVER ()) * 100)::numeric, 2) AS regional_population_percentage
-from
-	(SELECT
+-- Add a temp table grouping individual states into regions
+
+DROP TABLE IF EXISTS state_region;
+CREATE TEMP TABLE state_region AS (
+	SELECT
+		id,
 		CASE
 			WHEN lower(ad.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'New England'
 			WHEN lower(ad.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'Southeast'
@@ -225,11 +225,23 @@ from
 			WHEN lower(ad.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'Rocky Mountain'
 			WHEN lower(ad.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'Mideast'
 			WHEN lower(ad.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
-		END AS us_region,
+		END AS us_region
+	FROM alien_data AS ad
+);
+
+SELECT
+	us_region,
+	alien_regional_population,
+	round(((alien_regional_population::float / sum(sum(alien_regional_population)) OVER ()) * 100)::numeric, 2) AS regional_population_percentage
+from
+	(SELECT
+		sr.us_region,
 		count(ad.*) AS alien_regional_population
 	FROM alien_data AS ad
+	JOIN state_region AS sr
+	ON ad.id = sr.id
 	GROUP BY 
-		us_region
+		sr.us_region
 	ORDER BY alien_regional_population DESC) AS tmp
 GROUP BY 
 	us_region,
@@ -260,21 +272,14 @@ SELECT
 	rank() OVER (PARTITION BY us_region ORDER BY regional_gender_population desc) AS ranking
 from
 	(SELECT
-		CASE
-			WHEN lower(ad.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'New England'
-			WHEN lower(ad.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'Southeast'
-			WHEN lower(ad.state) IN ('wisconsin', 'ohio', 'indiana', 'illinois', 'michigan') then 'Great Lakes'
-			WHEN lower(ad.state) IN ('new mexico', 'arizona', 'texas', 'oklahoma') then 'Southwest'
-			WHEN lower(ad.state) IN ('north dakota', 'south dakota', 'kansas', 'iowa', 'nebraska', 'missouri', 'minnesota') then 'Plains'
-			WHEN lower(ad.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'Rocky Mountain'
-			WHEN lower(ad.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'Mideast'
-			WHEN lower(ad.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
-		END AS us_region,
+		sr.us_region,
 		ad.gender,
 		count(ad.*) AS regional_gender_population
 	FROM alien_data AS ad
+	JOIN state_region AS sr
+	ON ad.id = sr.id
 	GROUP BY 
-		us_region,
+		sr.us_region,
 		ad.gender
 	ORDER BY regional_gender_population DESC) AS tmp
 GROUP BY 
@@ -309,7 +314,39 @@ Mideast    |Male       |                      3229|                       44.82|
 Mideast    |Genderfluid|                       144|                        2.00|      3|
 Mideast    |Non-binary |                       126|                        1.75|      4|
 
+-- How many different aliens species live in the U.S. and are they concentrated in any particular region?  Use a cte to rank the species type by their region and return the top 2 ranked species per region.
 
+WITH top_species_region AS (
+	SELECT
+		DISTINCT ad.type AS species,
+		count(ad.type) AS n_species,
+		sr.us_region,
+		rank() OVER (PARTITION BY ad.type ORDER BY count(ad.type) desc) AS rnk
+	FROM alien_data AS ad
+	JOIN state_region AS sr
+		ON ad.id = sr.id
+	GROUP BY
+		species,
+		sr.us_region
+)
+
+SELECT
+	species,
+	us_region,
+	n_species
+FROM top_species_region
+WHERE rnk <= 2
+ORDER BY species, n_species DESC;
+
+-- Results:
+
+species  |
+---------+
+Grey     |
+Flatwoods|
+Nordic   |
+Reptile  |
+Green    |
 
 
 
