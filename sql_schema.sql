@@ -37,7 +37,7 @@ COPY aliens (
 	gender,
 	type, 
 	birth_year)
-FROM 'C:\Users\Jaime\Desktop\git-repo\aliens_of_america\csv\aliens.csv'
+FROM 'csv\aliens.csv'
 DELIMITER ',' CSV HEADER;
 
 COPY details (
@@ -45,7 +45,7 @@ COPY details (
 	favorite_food,
 	feeding_frequency, 
 	aggressive)
-FROM 'C:\Users\Jaime\Desktop\git-repo\aliens_of_america\csv\details.csv'
+FROM 'csv\details.csv'
 DELIMITER ',' CSV HEADER;
 
 COPY location (
@@ -54,5 +54,5 @@ COPY location (
 	state,
 	country,
 	occupation)
-FROM 'C:\Users\Jaime\Desktop\git-repo\aliens_of_america\csv\location.csv'
+FROM 'csv\location.csv'
 DELIMITER ',' CSV HEADER;

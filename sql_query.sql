@@ -68,7 +68,7 @@ CREATE TEMP TABLE alien_data as (
 		a.gender,
 		a.TYPE,
 		a.birth_year,
-		(2022 - a.birth_year) AS age,
+		(extract(YEAR FROM now()) - a.birth_year)::int AS age,
 		d.favorite_food,
 		d.feeding_frequency,
 		d.aggressive,
@@ -89,7 +89,7 @@ id|first_name|last_name|email              |gender |type   |birth_year|age|favor
 --+----------+---------+-------------------+-------+-------+----------+---+--------------------+-----------------+----------+----------------------+----------------+-----+-------------+
  1|Tyrus     |Wrey     |twrey0@sakura.ne.jp|Agender|Reptile|      1717|305|White-faced tree rat|Weekly           |true      |Senior Cost Accountant|Cincinnati      |Ohio |United States|
  
--- What is the count of records?
+-- How many records are in the dataset?
  
 SELECT count(*) AS n_records FROM alien_data;
 
@@ -113,7 +113,7 @@ HAVING count(*) > 1;
 email|count|
 -----+-----+
 
--- How many countrys are represented in out dataset?
+-- How many countrys are present in out dataset?
 
 SELECT 
 	country AS countries
@@ -141,7 +141,7 @@ number_of_states|
 -- All 50 states are represented and the District of Columbia           
 
 -- What is the count of aliens per state and what is the average age?   Order from highest to lowest population.
--- Include the percentage of hostile vs. friendly aliens per state.  Limit the forst 10 for brevity.
+-- Include the percentage of hostile vs. friendly aliens per state.  Limit the first 10 for brevity.
 
 WITH alien_aggression AS (
 	SELECT
