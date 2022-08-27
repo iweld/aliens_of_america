@@ -141,15 +141,24 @@ number_of_states|
 -- All 50 states are represented and the District of Columbia           
 
 -- What is the count of aliens per state and what is the average age?   Order from highest to lowest population.
--- Include the percentage of hostile vs. friendly aliens per state.
--- Only show the first 20 for brevity. 
+-- Include the percentage of hostile vs. friendly aliens per state. 
 
-WITH hostile_aliens AS (
+WITH alien_aggression AS (
 	SELECT
 		state,
-		count(*) AS n_hostile_aliens
+		sum(
+			CASE
+				WHEN aggressive = TRUE THEN 1
+				ELSE 0
+			END 
+		) AS n_hostile_aliens,
+		sum(
+			CASE
+				WHEN aggressive = false THEN 1
+				ELSE 0
+			END 
+		) AS n_friendly_aliens
 	FROM alien_data
-	WHERE aggressive = TRUE
 	GROUP BY state
 )              
 
@@ -157,26 +166,29 @@ SELECT
 	state,
 	alien_population_number,
 	avg_alien_age,
-	round(n_hostile_aliens / sum(sum(alien_population_number)) OVER () * 100, 2) AS hostile_percentage
+	round(((n_friendly_aliens::float / alien_population_number::float) * 100)::numeric, 2) AS friendly_alien_percentage,
+	round(((n_hostile_aliens / alien_population_number::float) * 100)::numeric, 2) AS hostile_alien_percentage
 from
 	(SELECT
 		ad.state,
 		count(ad.*) AS alien_population_number,
 		round(avg(ad.age)) AS avg_alien_age,
-		ha.n_hostile_aliens
+		aa.n_friendly_aliens,
+		aa.n_hostile_aliens
 	FROM alien_data AS ad
-	JOIN hostile_aliens AS ha
-	ON ad.state = ha.state
+	JOIN alien_aggression AS aa
+	ON ad.state = aa.state
 	GROUP BY 
 		ad.state,
-		ha.n_hostile_aliens
-	ORDER BY alien_population_number DESC
-	LIMIT 20) AS tmp
+		aa.n_hostile_aliens,
+		aa.n_friendly_aliens) AS tmp
 GROUP BY 
 	state,
 	alien_population_number,
 	avg_alien_age,
-	n_hostile_aliens
+	n_hostile_aliens,
+	n_friendly_aliens
+ORDER BY alien_population_number DESC
 
 -- Results:
 
