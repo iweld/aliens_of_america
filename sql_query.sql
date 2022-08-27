@@ -249,36 +249,15 @@ Plains        |                     4052|                          8.10|
 Rocky Mountain|                     2006|                          4.01|
 New England   |                     1671|                          3.34|
 
---What is the alien population and gender percentage per region?
--- Limit the forst 20 for brevity. jaime.m.shaker@gmail.com
+-- What is the alien population and gender percentage per region?  Rank results according to gender percentage results  
+-- Limit the first 20 for brevity. jaime.m.shaker@gmail.com
 
-WITH alien_aggression_gender AS (
-	SELECT
-		state,
-		gender,
-		count(
-			CASE
-				WHEN aggressive = TRUE THEN 1
-				ELSE 0
-			END 
-		) AS n_hostile_aliens,
-		count(
-			CASE
-				WHEN aggressive = false THEN 1
-				ELSE 0
-			END 
-		) AS n_friendly_aliens
-	FROM alien_data
-	GROUP BY 
-		state,
-		gender
-)            
-
-SELECT 
+SELECT
 	us_region,
 	gender,
-	alien_gender_population AS alien_gender_population_total,
-	round(((alien_gender_population::float / sum(sum(alien_gender_population)) OVER (PARTITION BY us_region)) * 100)::numeric, 2) AS alien_gender_percentage
+	regional_gender_population,
+	round(((regional_gender_population::float / sum(sum(regional_gender_population)) OVER (PARTITION BY us_region)) * 100)::numeric, 2) AS gender_population_percentage,
+	rank() OVER (PARTITION BY us_region ORDER BY regional_gender_population desc) AS ranking
 from
 	(SELECT
 		CASE
@@ -292,45 +271,43 @@ from
 			WHEN lower(ad.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
 		END AS us_region,
 		ad.gender,
-		count(ad.gender) AS alien_gender_population
+		count(ad.*) AS regional_gender_population
 	FROM alien_data AS ad
-	JOIN alien_aggression_gender AS agg
-	ON ad.state = agg.state
 	GROUP BY 
 		us_region,
 		ad.gender
-	ORDER BY us_region, alien_gender_population DESC) AS tmp
+	ORDER BY regional_gender_population DESC) AS tmp
 GROUP BY 
 	us_region,
 	gender,
-	alien_gender_population
-ORDER BY us_region, alien_gender_population_total DESC
+	regional_gender_population
+ORDER BY us_region, gender_population_percentage DESC
 LIMIT 20;
 
 -- Results:
 
-us_region  |gender     |alien_gender_population_total|alien_gender_percentage|
------------+-----------+-----------------------------+-----------------------+
-Far West   |Female     |                        28320|                  44.90|
-Far West   |Male       |                        28208|                  44.72|
-Far West   |Non-binary |                         1168|                   1.85|
-Far West   |Bigender   |                         1160|                   1.84|
-Far West   |Agender    |                         1152|                   1.83|
-Far West   |Genderfluid|                         1080|                   1.71|
-Far West   |Polygender |                         1016|                   1.61|
-Far West   |Genderqueer|                          976|                   1.55|
-Great Lakes|Female     |                        20920|                  45.68|
-Great Lakes|Male       |                        20248|                  44.21|
-Great Lakes|Non-binary |                          848|                   1.85|
-Great Lakes|Polygender |                          832|                   1.82|
-Great Lakes|Agender    |                          824|                   1.80|
-Great Lakes|Bigender   |                          792|                   1.73|
-Great Lakes|Genderqueer|                          760|                   1.66|
-Great Lakes|Genderfluid|                          576|                   1.26|
-Mideast    |Female     |                        26008|                  45.12|
-Mideast    |Male       |                        25832|                  44.82|
-Mideast    |Genderfluid|                         1152|                   2.00|
-Mideast    |Non-binary |                         1008|                   1.75|
+us_region  |gender     |regional_gender_population|gender_population_percentage|ranking|
+-----------+-----------+--------------------------+----------------------------+-------+
+Far West   |Female     |                      3540|                       44.90|      1|
+Far West   |Male       |                      3526|                       44.72|      2|
+Far West   |Non-binary |                       146|                        1.85|      3|
+Far West   |Bigender   |                       145|                        1.84|      4|
+Far West   |Agender    |                       144|                        1.83|      5|
+Far West   |Genderfluid|                       135|                        1.71|      6|
+Far West   |Polygender |                       127|                        1.61|      7|
+Far West   |Genderqueer|                       122|                        1.55|      8|
+Great Lakes|Female     |                      2615|                       45.68|      1|
+Great Lakes|Male       |                      2531|                       44.21|      2|
+Great Lakes|Non-binary |                       106|                        1.85|      3|
+Great Lakes|Polygender |                       104|                        1.82|      4|
+Great Lakes|Agender    |                       103|                        1.80|      5|
+Great Lakes|Bigender   |                        99|                        1.73|      6|
+Great Lakes|Genderqueer|                        95|                        1.66|      7|
+Great Lakes|Genderfluid|                        72|                        1.26|      8|
+Mideast    |Female     |                      3251|                       45.12|      1|
+Mideast    |Male       |                      3229|                       44.82|      2|
+Mideast    |Genderfluid|                       144|                        2.00|      3|
+Mideast    |Non-binary |                       126|                        1.75|      4|
 
 
 
