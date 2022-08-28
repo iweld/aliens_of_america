@@ -233,7 +233,7 @@ Georgia             |                  1431|          196|                    51
 North Carolina      |                  1248|          201|                    50.72|                   49.28|
 
 ### The Bureau of Economic Analysis goes with an eight-region map of the US.  
-![alt text](https://github.com/iweld/aliens_of_america/blob/main/bea_us_regions.JPG)
+![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/bea_us_regions.JPG)
 
 ### What regions have the highest population of aliens and what is the overall population percentage per region?
 
