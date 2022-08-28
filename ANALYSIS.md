@@ -84,6 +84,16 @@ CREATE TEMP TABLE alien_data as (
 		l.occupation,
 		l.current_location,
 		l.state,
+		CASE
+			WHEN lower(l.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'New England'
+			WHEN lower(l.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'Southeast'
+			WHEN lower(l.state) IN ('wisconsin', 'ohio', 'indiana', 'illinois', 'michigan') then 'Great Lakes'
+			WHEN lower(l.state) IN ('new mexico', 'arizona', 'texas', 'oklahoma') then 'Southwest'
+			WHEN lower(l.state) IN ('north dakota', 'south dakota', 'kansas', 'iowa', 'nebraska', 'missouri', 'minnesota') then 'Plains'
+			WHEN lower(l.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'Rocky Mountain'
+			WHEN lower(l.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'Mideast'
+			WHEN lower(l.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
+		END AS us_region,
 		l.country
 	FROM aliens AS a
 	JOIN details AS d ON a.id = d.detail_id
@@ -92,9 +102,9 @@ CREATE TEMP TABLE alien_data as (
 ````
 **Results**
 
-id|first_name|last_name|email              |gender |type   |birth_year|age|favorite_food       |feeding_frequency|aggressive|occupation            |current_location|state|country      |
---|----------|---------|-------------------|-------|-------|----------|---|--------------------|-----------------|----------|----------------------|----------------|-----|-------------|
- 1|Tyrus     |Wrey     |twrey0@sakura.ne.jp|Agender|Reptile|      1717|305|White-faced tree rat|Weekly           |true      |Senior Cost Accountant|Cincinnati      |Ohio |United States|
+id|first_name|last_name|email              |gender |type   |birth_year|age|favorite_food       |feeding_frequency|aggressive|occupation            |current_location|state|us_region  |country      |
+--|----------|---------|-------------------|-------|-------|----------|---|--------------------|-----------------|----------|----------------------|----------------|-----|-----------|-------------|
+ 1|Tyrus     |Wrey     |twrey0@sakura.ne.jp|Agender|Reptile|      1717|305|White-faced tree rat|Weekly           |true      |Senior Cost Accountant|Cincinnati      |Ohio |Great Lakes|United States|
  
  ### How many records are in the dataset?
  
@@ -225,27 +235,6 @@ North Carolina      |                  1248|          201|                    50
 ### The Bureau of Economic Analysis goes with an eight-region map of the US.  
 ![alt text](https://github.com/iweld/aliens_of_america/blob/main/bea_us_regions.JPG)
 
-### Add a temp table grouping individual states into regions
-
-````sql
-DROP TABLE IF EXISTS state_region;
-CREATE TEMP TABLE state_region AS (
-	SELECT
-		id,
-		CASE
-			WHEN lower(ad.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'New England'
-			WHEN lower(ad.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'Southeast'
-			WHEN lower(ad.state) IN ('wisconsin', 'ohio', 'indiana', 'illinois', 'michigan') then 'Great Lakes'
-			WHEN lower(ad.state) IN ('new mexico', 'arizona', 'texas', 'oklahoma') then 'Southwest'
-			WHEN lower(ad.state) IN ('north dakota', 'south dakota', 'kansas', 'iowa', 'nebraska', 'missouri', 'minnesota') then 'Plains'
-			WHEN lower(ad.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'Rocky Mountain'
-			WHEN lower(ad.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'Mideast'
-			WHEN lower(ad.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
-		END AS us_region
-	FROM alien_data AS ad
-);
-````
-
 ### What regions have the highest population of aliens and what is the overall population percentage per region?
 
 ````sql
@@ -255,13 +244,11 @@ SELECT
 	round(((alien_regional_population::float / sum(sum(alien_regional_population)) OVER ()) * 100)::numeric, 2) AS regional_population_percentage
 from
 	(SELECT
-		sr.us_region,
+		ad.us_region,
 		count(ad.*) AS alien_regional_population
 	FROM alien_data AS ad
-	JOIN state_region AS sr
-	ON ad.id = sr.id
 	GROUP BY 
-		sr.us_region
+		ad.us_region
 	ORDER BY alien_regional_population DESC) AS tmp
 GROUP BY 
 	us_region,
@@ -293,14 +280,12 @@ SELECT
 	rank() OVER (PARTITION BY us_region ORDER BY regional_gender_population desc) AS ranking
 from
 	(SELECT
-		sr.us_region,
+		ad.us_region,
 		ad.gender,
 		count(ad.*) AS regional_gender_population
 	FROM alien_data AS ad
-	JOIN state_region AS sr
-	ON ad.id = sr.id
 	GROUP BY 
-		sr.us_region,
+		ad.us_region,
 		ad.gender
 	ORDER BY regional_gender_population DESC) AS tmp
 GROUP BY 
@@ -343,14 +328,12 @@ WITH top_species_region AS (
 	SELECT
 		DISTINCT ad.type AS species,
 		count(ad.type) AS n_species,
-		sr.us_region,
+		ad.us_region,
 		rank() OVER (PARTITION BY ad.type ORDER BY count(ad.type) desc) AS rnk
 	FROM alien_data AS ad
-	JOIN state_region AS sr
-		ON ad.id = sr.id
 	GROUP BY
 		species,
-		sr.us_region
+		ad.us_region
 )
 
 SELECT
