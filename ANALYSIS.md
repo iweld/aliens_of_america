@@ -232,8 +232,23 @@ Pennsylvania        |                  1590|          200|                    51
 Georgia             |                  1431|          196|                    51.99|                   48.01|
 North Carolina      |                  1248|          201|                    50.72|                   49.28|
 
+### What are the yougest and oldest alien ages in the U.S.?
+
+````sql
+SELECT
+	max(age) AS oldest_age,
+	min(age) AS youngest_age
+FROM alien_data
+````
+
+**Results**
+
+oldest_age|youngest_age|
+----------|------------|
+350|          50|
+
 ### The Bureau of Economic Analysis goes with an eight-region map of the US.  
-![alt text](https://github.com/iweld/aliens_of_america/blob/main/bea_us_regions.JPG)
+![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/bea_us_regions.JPG)
 
 ### What regions have the highest population of aliens and what is the overall population percentage per region?
 
@@ -391,9 +406,52 @@ Nordic   |Scaly-breasted lorikeet  |
 Nordic   |Two-toed tree sloth      |
 Reptile  |Gonolek, burchell's      |
 
+### Which are the top 10 cities where aliens are located and is the population majority hostile or friendly?
 
+````sql
+SELECT
+	alien_location,
+	hostile_aliens,
+	friendly_aliens,
+	CASE
+		WHEN hostile_aliens > friendly_aliens THEN 'Hostile'
+		ELSE 'Friendly'
+	END AS population_majority
+from
+	(SELECT
+		current_location AS alien_location,
+		count(
+			CASE
+				WHEN aggressive = TRUE THEN 1
+				ELSE null
+			END 
+		) AS hostile_aliens,
+		count(
+			CASE
+				WHEN aggressive != TRUE THEN 1
+				ELSE null
+			END 
+		) AS friendly_aliens
+	FROM alien_data
+	GROUP BY current_location
+	ORDER BY count(current_location) desc
+	LIMIT 10) AS tmp
+````
 
+**Results**
 
+alien_location|hostile_aliens|friendly_aliens|population_majority|
+--------------|--------------|---------------|-------------------|
+Washington    |           851|            810|Hostile            |
+Houston       |           513|            502|Hostile            |
+New York City |           421|            419|Hostile            |
+El Paso       |           415|            425|Friendly           |
+Dallas        |           325|            339|Friendly           |
+Atlanta       |           297|            328|Friendly           |
+Kansas City   |           270|            293|Friendly           |
+Sacramento    |           291|            251|Hostile            |
+Miami         |           260|            267|Friendly           |
+Los Angeles   |           230|            271|Friendly           |
 
  
  

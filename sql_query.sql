@@ -428,9 +428,13 @@ Miami         |           260|            267|Friendly           |
 Los Angeles   |           230|            271|Friendly           |
 
 
+<<<<<<< HEAD
 
 -- Output to csv file.
 --COPY alien_data TO 'aliens_of_america.csv' DELIMITER ',' CSV HEADER;
+=======
+COPY alien_data TO 'aliens_of_america.csv' DELIMITER ',' CSV HEADER;
+>>>>>>> bc2a2d07b17d2157cb43faa267c1f7775720a26b
 
 
 
