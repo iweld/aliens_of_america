@@ -5,7 +5,7 @@ A portfolio building dataset provided by [Ian K.](https://www.linkedin.com/in/ia
 
 Check out [My Current Analysis](https://github.com/iweld/aliens_of_america/blob/main/ANALYSIS.md "My Current Analysis") in SQL.
 
-Check out [My Current Excel Dashboard](https://github.com/iweld/aliens_of_america/blob/main/aliens_of_america.xlsx "My Current Excel Dashboard").
+Check out [My Current Excel Dashboard](https://github.com/iweld/aliens_of_america/blob/main/excel_dashboard/aliens_of_america.xlsx "My Current Excel Dashboard").
 
 ## Problem Statement
 For this project, you play a role as a newly hired Data Analyst for a pharmaceutical company.
@@ -30,4 +30,4 @@ This dataset contains only three tables named
  - location
 
 ## Entity Relationship Diagram
-![alt text](https://github.com/iweld/aliens_of_america/blob/main/ERD.JPG)
+![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/ERD.JPG)
