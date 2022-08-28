@@ -245,7 +245,7 @@ FROM alien_data
 
 oldest_age|youngest_age|
 ----------|------------|
-       350|          50|
+350|          50|
 
 ### The Bureau of Economic Analysis goes with an eight-region map of the US.  
 ![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/bea_us_regions.JPG)
