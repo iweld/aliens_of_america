@@ -370,7 +370,7 @@ Nordic   |Two-toed tree sloth      |
 Reptile  |Gonolek, burchell's      |
 
 
-COPY alien_data TO 'C:\Users\Jaime\Desktop\aliens_of_america.csv' DELIMITER ',' CSV HEADER;
+COPY alien_data TO 'aliens_of_america.csv' DELIMITER ',' CSV HEADER;
 
 
 
