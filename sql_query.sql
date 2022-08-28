@@ -367,10 +367,57 @@ Grey     |Openbill stork           |
 Nordic   |Pine snake (unidentified)|
 Nordic   |Scaly-breasted lorikeet  |
 Nordic   |Two-toed tree sloth      |
-Reptile  |Gonolek, burchell's      |
+Reptile  |Gonolek, burchells       |
+
+-- Which are the top 10 cities where aliens are located and is the population majority hostile or friendly?
+
+SELECT
+	alien_location,
+	hostile_aliens,
+	friendly_aliens,
+	CASE
+		WHEN hostile_aliens > friendly_aliens THEN 'Hostile'
+		ELSE 'Friendly'
+	END AS population_majority
+from
+	(SELECT
+		current_location AS alien_location,
+		count(
+			CASE
+				WHEN aggressive = TRUE THEN 1
+				ELSE null
+			END 
+		) AS hostile_aliens,
+		count(
+			CASE
+				WHEN aggressive != TRUE THEN 1
+				ELSE null
+			END 
+		) AS friendly_aliens
+	FROM alien_data
+	GROUP BY current_location
+	ORDER BY count(current_location) desc
+	LIMIT 10) AS tmp
+
+-- Results:
+
+alien_location|hostile_aliens|friendly_aliens|population_majority|
+--------------+--------------+---------------+-------------------+
+Washington    |           851|            810|Hostile            |
+Houston       |           513|            502|Hostile            |
+New York City |           421|            419|Hostile            |
+El Paso       |           415|            425|Friendly           |
+Dallas        |           325|            339|Friendly           |
+Atlanta       |           297|            328|Friendly           |
+Kansas City   |           270|            293|Friendly           |
+Sacramento    |           291|            251|Hostile            |
+Miami         |           260|            267|Friendly           |
+Los Angeles   |           230|            271|Friendly           |
 
 
-COPY alien_data TO 'C:\Users\Jaime\Desktop\aliens_of_america.csv' DELIMITER ',' CSV HEADER;
+
+-- Output to csv file.
+--COPY alien_data TO 'aliens_of_america.csv' DELIMITER ',' CSV HEADER;
 
 
 
