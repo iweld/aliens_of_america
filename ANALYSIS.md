@@ -232,6 +232,21 @@ Pennsylvania        |                  1590|          200|                    51
 Georgia             |                  1431|          196|                    51.99|                   48.01|
 North Carolina      |                  1248|          201|                    50.72|                   49.28|
 
+### What are the yougest and oldest alien ages in the U.S.?
+
+````sql
+SELECT
+	max(age) AS oldest_age,
+	min(age) AS youngest_age
+FROM alien_data
+````
+
+**Results**
+
+oldest_age|youngest_age|
+----------|------------|
+       350|          50|
+
 ### The Bureau of Economic Analysis goes with an eight-region map of the US.  
 ![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/bea_us_regions.JPG)
 
