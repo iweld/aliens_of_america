@@ -89,7 +89,7 @@ CREATE TEMP TABLE alien_data as (
 		l.country
 	FROM aliens AS a
 	JOIN details AS d ON a.id = d.detail_id
-	JOIN LOCATION AS l ON a.id = l.loc_id
+	JOIN location AS l ON a.id = l.loc_id
 );
 
 SELECT * FROM alien_data WHERE id = 1;
@@ -231,7 +231,7 @@ oldest_age|youngest_age|
        350|          50|
 
 
--- The Bureau of Economic Analysis goes with an eight-region map of the US.  What regions have the highest population of aliens and what
+-- The U.S. Bureau of Economic Analysis developed an eight-region map of the US seen below.  What regions have the highest population of aliens and what
 -- is the overall population percentage per region?
 
 
@@ -428,13 +428,9 @@ Miami         |           260|            267|Friendly           |
 Los Angeles   |           230|            271|Friendly           |
 
 
-<<<<<<< HEAD
-
 -- Output to csv file.
 --COPY alien_data TO 'aliens_of_america.csv' DELIMITER ',' CSV HEADER;
-=======
-COPY alien_data TO 'aliens_of_america.csv' DELIMITER ',' CSV HEADER;
->>>>>>> bc2a2d07b17d2157cb43faa267c1f7775720a26b
+
 
 
 
