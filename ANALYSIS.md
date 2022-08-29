@@ -97,7 +97,7 @@ CREATE TEMP TABLE alien_data as (
 		l.country
 	FROM aliens AS a
 	JOIN details AS d ON a.id = d.detail_id
-	JOIN LOCATION AS l ON a.id = l.loc_id
+	JOIN location AS l ON a.id = l.loc_id
 );
 ````
 **Results**
@@ -247,7 +247,7 @@ oldest_age|youngest_age|
 ----------|------------|
 350|          50|
 
-### The Bureau of Economic Analysis goes with an eight-region map of the US.  
+### The U.S. Bureau of Economic Analysis developed an eight-region map of the US seen below.  
 ![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/bea_us_regions.JPG)
 
 ### What regions have the highest population of aliens and what is the overall population percentage per region?
