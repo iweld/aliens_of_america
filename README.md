@@ -5,9 +5,9 @@ A portfolio building dataset provided by [Ian K.](https://www.linkedin.com/in/ia
 
 Check out [My Current Analysis](https://github.com/iweld/aliens_of_america/blob/main/ANALYSIS.md "My Current Analysis") in SQL.
 
-Check out [My Current Excel Dashboard](https://github.com/iweld/aliens_of_america/blob/main/excel_dashboard/aliens_of_america.xlsx "My Current Excel Dashboard").
+Check out [My Current Excel Dashboard](https://github.com/iweld/aliens_of_america/raw/main/excel_dashboard/aliens_of_america_deux.xlsx "My Current Excel Dashboard").
 
-![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/dashboard_screenshot.JPG)
+![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/dashboard_2_screenshot.JPG)
 
 ## Problem Statement
 For this project, you play a role as a newly hired Data Analyst for a pharmaceutical company.
