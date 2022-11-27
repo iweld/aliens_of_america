@@ -429,7 +429,7 @@ Los Angeles   |           230|            271|Friendly           |
 
 
 -- Output to csv file.
---COPY alien_data TO 'aliens_of_america.csv' DELIMITER ',' CSV HEADER;
+-- COPY alien_data TO 'aliens_of_america_cleaned.csv' DELIMITER ',' CSV HEADER;
 
 
 
