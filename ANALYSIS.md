@@ -133,7 +133,11 @@ email|count|
 ❗ **Note**
 * No records were returned
 
+<<<<<<< HEAD
 ### How many countrys are present in our dataset?
+=======
+### How many countries are present in out dataset?
+>>>>>>> 0efccfaa67099669869ac4ac0b4634af4c146844
 
 ````sql
 SELECT 
