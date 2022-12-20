@@ -66,7 +66,10 @@ CREATE TEMP TABLE alien_data as (
 		a.first_name,
 		a.last_name,
 		a.email,
-		a.gender,
+		CASE
+			WHEN lower(a.gender) <> 'female' OR lower(a.gender) <> 'male'
+			then 'non-binary'
+		END AS gender,
 		a.TYPE,
 		a.birth_year,
 		(extract(YEAR FROM now()) - a.birth_year)::int AS age,
