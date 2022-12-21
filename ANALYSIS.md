@@ -71,40 +71,45 @@ DROP TABLE IF EXISTS alien_data;
 CREATE TEMP TABLE alien_data as (
 	SELECT
 		a.id,
-		a.first_name,
-		a.last_name,
+		lower(a.first_name) AS first_name,
+		lower(a.last_name) AS last_name,
 		a.email,
-		a.gender,
-		a.TYPE,
+		CASE
+			WHEN lower(a.gender) <> 'female' OR lower(a.gender) <> 'male' THEN 'non-binary'
+			ELSE lower(a.gender)
+		END AS gender,
+		lower(a.TYPE),
 		a.birth_year,
 		(extract(YEAR FROM now()) - a.birth_year)::int AS age,
-		d.favorite_food,
-		d.feeding_frequency,
+		lower(d.favorite_food) AS favorite_food,
+		lower(d.feeding_frequency) AS feeding_frequency,
 		d.aggressive,
-		l.occupation,
-		l.current_location,
-		l.state,
+		lower(l.occupation) AS occupation,
+		lower(l.current_location) AS current_location,
+		lower(l.state) AS state,
 		CASE
-			WHEN lower(l.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'New England'
-			WHEN lower(l.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'Southeast'
-			WHEN lower(l.state) IN ('wisconsin', 'ohio', 'indiana', 'illinois', 'michigan') then 'Great Lakes'
-			WHEN lower(l.state) IN ('new mexico', 'arizona', 'texas', 'oklahoma') then 'Southwest'
-			WHEN lower(l.state) IN ('north dakota', 'south dakota', 'kansas', 'iowa', 'nebraska', 'missouri', 'minnesota') then 'Plains'
-			WHEN lower(l.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'Rocky Mountain'
-			WHEN lower(l.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'Mideast'
-			WHEN lower(l.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'Far West'
+			WHEN lower(l.state) IN ('maine', 'new hampshire', 'massachusetts', 'connecticut', 'vermont', 'rhode island') then 'new england'
+			WHEN lower(l.state) IN ('alabama', 'arkansas', 'florida', 'georgia', 'kentucky', 'louisiana', 'mississippi', 'north carolina', 'south carolina', 'tennessee', 'virginia', 'west virginia') then 'southeast'
+			WHEN lower(l.state) IN ('wisconsin', 'ohio', 'indiana', 'illinois', 'michigan') then 'great lakes'
+			WHEN lower(l.state) IN ('new mexico', 'arizona', 'texas', 'oklahoma') then 'southwest'
+			WHEN lower(l.state) IN ('north dakota', 'south dakota', 'kansas', 'iowa', 'nebraska', 'missouri', 'minnesota') then 'plains'
+			WHEN lower(l.state) IN ('colorado', 'utah', 'idaho', 'montana', 'wyoming') then 'rocky mountain'
+			WHEN lower(l.state) IN ('new york', 'new jersey', 'pennsylvania', 'delaware', 'maryland', 'district of columbia') then 'mideast'
+			WHEN lower(l.state) IN ('california', 'alaska', 'nevada', 'oregon', 'washington', 'hawaii') then 'far west'
 		END AS us_region,
-		l.country
+		lower(l.country) AS country
 	FROM aliens AS a
 	JOIN details AS d ON a.id = d.detail_id
 	JOIN location AS l ON a.id = l.loc_id
 );
+
+SELECT * FROM alien_data WHERE id = 1;
 ````
 **Results**
 
-id|first_name|last_name|email              |gender |type   |birth_year|age|favorite_food       |feeding_frequency|aggressive|occupation            |current_location|state|us_region  |country      |
---|----------|---------|-------------------|-------|-------|----------|---|--------------------|-----------------|----------|----------------------|----------------|-----|-----------|-------------|
- 1|Tyrus     |Wrey     |twrey0@sakura.ne.jp|Agender|Reptile|      1717|305|White-faced tree rat|Weekly           |true      |Senior Cost Accountant|Cincinnati      |Ohio |Great Lakes|United States|
+id|first_name|last_name|email              |gender    |lower  |birth_year|age|favorite_food       |feeding_frequency|aggressive|occupation            |current_location|state|us_region  |country      |
+--|----------|---------|-------------------|----------|-------|----------|---|--------------------|-----------------|----------|----------------------|----------------|-----|-----------|-------------|
+ 1|tyrus     |wrey     |twrey0@sakura.ne.jp|non-binary|reptile|      1717|305|white-faced tree rat|weekly           |true      |senior cost accountant|cincinnati      |ohio |great lakes|united states|
  
  ### How many records are in the dataset?
  
