@@ -56,7 +56,7 @@ loc_id|current_location|state     |country      |occupation            |
      4|Richmond        |Virginia  |United States|Director of Sales     |
      5|Atlanta         |Georgia   |United States|Administrative Officer|
 
--- Create a temp table and join all the data
+-- Create a temp table, clean and join all the data
 -- Let's also add an 'Age' column and a state 'Region' column.
 
 DROP TABLE IF EXISTS alien_data;
@@ -384,7 +384,7 @@ grey     |openbill stork           |
 nordic   |two-toed tree sloth      |
 nordic   |scaly-breasted lorikeet  |
 nordic   |pine snake (unidentified)|
-reptile  |gonolek, burchell's      |
+reptile  |gonolek, burchells      |
 
 -- Which are the top 10 cities where aliens are located and is the population majority hostile or friendly?
 

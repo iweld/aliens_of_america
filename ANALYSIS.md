@@ -62,7 +62,7 @@ COPY location (
 FROM 'csv\location.csv'
 DELIMITER ',' CSV HEADER;
 ````
-### Create Temp Table and join data.
+### Create Temp Table, clean  and join data.
 
 ````sql
 -- Create a temp table and join all the data
@@ -151,7 +151,7 @@ GROUP BY country;
 
 countries    |
 -------------|
-United States|
+united states|
 
 ### Are all states represented in the dataset?
 
@@ -226,16 +226,16 @@ LIMIT 10;
 
 state               |alien_population_total|avg_alien_age|friendly_alien_percentage|hostile_alien_percentage|
 --------------------|----------------------|-------------|-------------------------|------------------------|
-Texas               |                  5413|          200|                    49.53|                   50.47|
-California          |                  5410|          202|                    50.15|                   49.85|
-Florida             |                  4176|          199|                    50.36|                   49.64|
-New York            |                  2690|          202|                    50.56|                   49.44|
-Ohio                |                  1851|          199|                    49.43|                   50.57|
-Virginia            |                  1749|          197|                    51.80|                   48.20|
-District of Columbia|                  1661|          197|                    48.77|                   51.23|
-Pennsylvania        |                  1590|          200|                    51.38|                   48.62|
-Georgia             |                  1431|          196|                    51.99|                   48.01|
-North Carolina      |                  1248|          201|                    50.72|                   49.28|
+texas               |                  5413|          200|                    49.53|                   50.47|
+california          |                  5410|          202|                    50.15|                   49.85|
+florida             |                  4176|          199|                    50.36|                   49.64|
+new york            |                  2690|          202|                    50.56|                   49.44|
+ohio                |                  1851|          199|                    49.43|                   50.57|
+virginia            |                  1749|          197|                    51.80|                   48.20|
+district of columbia|                  1661|          197|                    48.77|                   51.23|
+pennsylvania        |                  1590|          200|                    51.38|                   48.62|
+georgia             |                  1431|          196|                    51.99|                   48.01|
+north carolina      |                  1248|          201|                    50.72|                   49.28|
 
 ### What are the yougest and oldest alien ages in the U.S.?
 
@@ -280,16 +280,16 @@ ORDER BY regional_population_percentage DESC
 
 us_region     |alien_regional_population|regional_population_percentage|
 --------------|-------------------------|------------------------------|
-Southeast     |                    13856|                         27.71|
-Far West      |                     7885|                         15.77|
-Southwest     |                     7600|                         15.20|
-Mideast       |                     7205|                         14.41|
-Great Lakes   |                     5725|                         11.45|
-Plains        |                     4052|                          8.10|
-Rocky Mountain|                     2006|                          4.01|
-New England   |                     1671|                          3.34|
+southeast     |                    13856|                         27.71|
+far west      |                     7885|                         15.77|
+southwest     |                     7600|                         15.20|
+mideast       |                     7205|                         14.41|
+great lakes   |                     5725|                         11.45|
+plains        |                     4052|                          8.10|
+rocky mountain|                     2006|                          4.01|
+new england   |                     1671|                          3.34|
 
-### What is the alien population and gender percentage per region?  Rank results according to gender percentage results.  Limit the first 20 for brevity.
+### What is the alien population and gender percentage per region?  Rank results according to gender percentage results.
 
 ````sql
 SELECT
@@ -312,34 +312,37 @@ GROUP BY
 	us_region,
 	gender,
 	regional_gender_population
-ORDER BY us_region, gender_population_percentage DESC
-LIMIT 20;
+ORDER BY us_region, gender_population_percentage DESC;
 ````
 
 **Results**
 
-us_region  |gender     |regional_gender_population|gender_population_percentage|ranking|
------------|-----------|--------------------------|----------------------------|-------|
-Far West   |Female     |                      3540|                       44.90|      1|
-Far West   |Male       |                      3526|                       44.72|      2|
-Far West   |Non-binary |                       146|                        1.85|      3|
-Far West   |Bigender   |                       145|                        1.84|      4|
-Far West   |Agender    |                       144|                        1.83|      5|
-Far West   |Genderfluid|                       135|                        1.71|      6|
-Far West   |Polygender |                       127|                        1.61|      7|
-Far West   |Genderqueer|                       122|                        1.55|      8|
-Great Lakes|Female     |                      2615|                       45.68|      1|
-Great Lakes|Male       |                      2531|                       44.21|      2|
-Great Lakes|Non-binary |                       106|                        1.85|      3|
-Great Lakes|Polygender |                       104|                        1.82|      4|
-Great Lakes|Agender    |                       103|                        1.80|      5|
-Great Lakes|Bigender   |                        99|                        1.73|      6|
-Great Lakes|Genderqueer|                        95|                        1.66|      7|
-Great Lakes|Genderfluid|                        72|                        1.26|      8|
-Mideast    |Female     |                      3251|                       45.12|      1|
-Mideast    |Male       |                      3229|                       44.82|      2|
-Mideast    |Genderfluid|                       144|                        2.00|      3|
-Mideast    |Non-binary |                       126|                        1.75|      4|
+us_region     |gender    |regional_gender_population|gender_population_percentage|ranking|
+--------------|----------|--------------------------|----------------------------|-------|
+far west      |female    |                      3540|                       44.90|      1|
+far west      |male      |                      3526|                       44.72|      2|
+far west      |non-binary|                       819|                       10.39|      3|
+great lakes   |female    |                      2615|                       45.68|      1|
+great lakes   |male      |                      2531|                       44.21|      2|
+great lakes   |non-binary|                       579|                       10.11|      3|
+mideast       |female    |                      3251|                       45.12|      1|
+mideast       |male      |                      3229|                       44.82|      2|
+mideast       |non-binary|                       725|                       10.06|      3|
+new england   |female    |                       791|                       47.34|      1|
+new england   |male      |                       716|                       42.85|      2|
+new england   |non-binary|                       164|                        9.81|      3|
+plains        |male      |                      1849|                       45.63|      1|
+plains        |female    |                      1818|                       44.87|      2|
+plains        |non-binary|                       385|                        9.50|      3|
+rocky mountain|female    |                       935|                       46.61|      1|
+rocky mountain|male      |                       872|                       43.47|      2|
+rocky mountain|non-binary|                       199|                        9.92|      3|
+southeast     |female    |                      6332|                       45.70|      1|
+southeast     |male      |                      6175|                       44.57|      2|
+southeast     |non-binary|                      1349|                        9.74|      3|
+southwest     |female    |                      3448|                       45.37|      1|
+southwest     |male      |                      3425|                       45.07|      2|
+southwest     |non-binary|                       727|                        9.57|      3|
 
 ### How many different aliens species live in the U.S. and are they concentrated in any particular region?  Use a cte to rank the species type by their region and return the top 2 ranked species per region.
 
@@ -369,16 +372,16 @@ ORDER BY species, n_species DESC;
 
 species  |us_region|n_species|
 ---------|---------|---------|
-Flatwoods|Southeast|     2848|
-Flatwoods|Far West |     1620|
-Green    |Southeast|     2752|
-Green    |Far West |     1608|
-Grey     |Southeast|     2799|
-Grey     |Southwest|     1532|
-Nordic   |Southeast|     2768|
-Nordic   |Far West |     1548|
-Reptile  |Southeast|     2689|
-Reptile  |Far West |     1608|
+flatwoods|southeast|     2848|
+flatwoods|far west |     1620|
+green    |southeast|     2752|
+green    |far west |     1608|
+grey     |southeast|     2799|
+grey     |southwest|     1532|
+nordic   |southeast|     2768|
+nordic   |far west |     1548|
+reptile  |southeast|     2689|
+reptile  |far west |     1608|
 
 ### What is the top favorite food of every species including ties?
 
@@ -396,20 +399,20 @@ from
 		species,
 		favorite_food) AS tmp
 WHERE rnk = 1
-ORDER BY species, rnk desc
+ORDER BY species, rnk DESC;
 ````
 
 **Results**
 
 species  |favorite_food            |
 ---------|-------------------------|
-Flatwoods|Eagle, bateleur          |
-Green    |Gray duiker              |
-Grey     |Openbill stork           |
-Nordic   |Pine snake (unidentified)|
-Nordic   |Scaly-breasted lorikeet  |
-Nordic   |Two-toed tree sloth      |
-Reptile  |Gonolek, burchell's      |
+flatwoods|eagle, bateleur          |
+green    |gray duiker              |
+grey     |openbill stork           |
+nordic   |two-toed tree sloth      |
+nordic   |scaly-breasted lorikeet  |
+nordic   |pine snake (unidentified)|
+reptile  |gonolek, burchell's      |
 
 ### Which are the top 10 cities where aliens are located and is the population majority hostile or friendly?
 
@@ -440,23 +443,23 @@ from
 	FROM alien_data
 	GROUP BY current_location
 	ORDER BY count(current_location) desc
-	LIMIT 10) AS tmp
+	LIMIT 10) AS tmp;
 ````
 
 **Results**
 
 alien_location|hostile_aliens|friendly_aliens|population_majority|
 --------------|--------------|---------------|-------------------|
-Washington    |           851|            810|Hostile            |
-Houston       |           513|            502|Hostile            |
-New York City |           421|            419|Hostile            |
-El Paso       |           415|            425|Friendly           |
-Dallas        |           325|            339|Friendly           |
-Atlanta       |           297|            328|Friendly           |
-Kansas City   |           270|            293|Friendly           |
-Sacramento    |           291|            251|Hostile            |
-Miami         |           260|            267|Friendly           |
-Los Angeles   |           230|            271|Friendly           |
+washington    |           851|            810|Hostile            |
+houston       |           513|            502|Hostile            |
+el paso       |           415|            425|Friendly           |
+new york city |           421|            419|Hostile            |
+dallas        |           325|            339|Friendly           |
+atlanta       |           297|            328|Friendly           |
+kansas city   |           270|            293|Friendly           |
+sacramento    |           291|            251|Hostile            |
+miami         |           260|            267|Friendly           |
+los angeles   |           230|            271|Friendly           |
 
  
  
