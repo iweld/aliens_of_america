@@ -414,22 +414,22 @@ from
 	FROM alien_data
 	GROUP BY current_location
 	ORDER BY count(current_location) desc
-	LIMIT 10) AS tmp
+	LIMIT 10) AS tmp;
 
 -- Results:
 
 alien_location|hostile_aliens|friendly_aliens|population_majority|
 --------------+--------------+---------------+-------------------+
-Washington    |           851|            810|Hostile            |
-Houston       |           513|            502|Hostile            |
-New York City |           421|            419|Hostile            |
-El Paso       |           415|            425|Friendly           |
-Dallas        |           325|            339|Friendly           |
-Atlanta       |           297|            328|Friendly           |
-Kansas City   |           270|            293|Friendly           |
-Sacramento    |           291|            251|Hostile            |
-Miami         |           260|            267|Friendly           |
-Los Angeles   |           230|            271|Friendly           |
+washington    |           851|            810|Hostile            |
+houston       |           513|            502|Hostile            |
+el paso       |           415|            425|Friendly           |
+new york city |           421|            419|Hostile            |
+dallas        |           325|            339|Friendly           |
+atlanta       |           297|            328|Friendly           |
+kansas city   |           270|            293|Friendly           |
+sacramento    |           291|            251|Hostile            |
+miami         |           260|            267|Friendly           |
+los angeles   |           230|            271|Friendly           |
 
 
 -- Output to csv file.
