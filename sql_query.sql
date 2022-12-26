@@ -430,7 +430,7 @@ kansas city   |           270|            293|Friendly           |
 sacramento    |           291|            251|Hostile            |
 miami         |           260|            267|Friendly           |
 los angeles   |           230|            271|Friendly           |
-
+	
 
 -- Output to csv file.
 -- COPY alien_data TO 'aliens_of_america_cleaned.csv' DELIMITER ',' CSV HEADER;
