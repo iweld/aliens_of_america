@@ -7,8 +7,6 @@ Check out [My Current Analysis](https://github.com/iweld/aliens_of_america/blob/
 
 Check out [My Current Tableau Dashboard](https://public.tableau.com/app/profile/jaime.shaker/viz/FauxPharmaceutical/Dashboard "My Current Tableau Dashboard").
 
-Check out [My Current Excel Dashboard](https://github.com/iweld/aliens_of_america/raw/main/excel_dashboard/aliens_of_america_deux.xlsx "My Current Excel Dashboard").
-
 ![alt text](https://github.com/iweld/aliens_of_america/blob/main/images/faux_screen_mid.PNG)
 
 ## Problem Statement
